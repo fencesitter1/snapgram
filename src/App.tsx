@@ -4,6 +4,7 @@ import { Home } from './_root/pages';
 import SigninForm from './_auth/forms/SigninForm';
 import SignupForm from './_auth/forms/SignupForm';
 import AuthLayout from './_auth/forms/AuthLayout';
+import RootLayout from './_root/RootLayout';
 export default function App() {
   return (
     <main className="flex h-screen">
@@ -20,10 +21,12 @@ export default function App() {
           />
         </Route>
         {/* private routes */}
-        <Route
-          path="/"
-          element={<Home />}
-        />
+        <Route element={<RootLayout />}>
+          <Route
+            path="/"
+            element={<Home />}
+          />
+        </Route>
       </Routes>
     </main>
   );
