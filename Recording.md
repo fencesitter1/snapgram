@@ -202,6 +202,26 @@ export default function Home() {
 
 ```
 
+## error:The `bg-dark-1` class does not exist
+
+## Specific error
+
+[postcss] E:/sites/snapgram/src/globals.css:3:1: The `bg-dark-1` class does not exist. If `bg-dark-1` is a custom class, make sure it is defined within a `@layer` directive.
+
+## 解决方法
+
+错误信息表明 `bg-dark-1` 类未找到。这可能是因为它没有在你的 Tailwind CSS 配置文件 (`tailwind.config.js`) 中定义，或者它没有被 Tailwind CSS 生成。
+
+可能的原因有：
+
+1. 确保你的 Tailwind 配置文件 (`tailwind.config.js`) 中已经定义了 `dark-1` 颜色。
+2. 确保你已经重新构建了你的项目以应用新的配置更改。你可以通过运行 `npm run build` 或相应的构建命令来做到这一点。
+3. 确保你的项目正确地配置了 PostCSS 和 Tailwind CSS。你的 PostCSS 配置文件 (`postcss.config.js`) 应该包含 Tailwind CSS 插件。
+
+如果你已经检查了以上所有点，但问题仍然存在，那么可能需要更深入地调查你的项目配置。
+
+我只能说gpt4永远的神,**重新构建`npm run build` 解决问题.**
+
 ## SignupForm
 
 
