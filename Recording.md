@@ -85,7 +85,7 @@ The main difference between these two import methods is that they are used to im
 
 2. `import Home from './_root/pages/Home';` This method is used to import default exports. In your module, if you have such an export `export default ...;` and you want to import it as `Home`, then you can use this method to import.
 
-## `<Route element={<AuthLayout />}>`
+## AuthLayout组件
 
 在React Router中，`<Route element={}>`的设置是用来指定当路由匹配时应该渲染哪个组件。在你的代码中，`<AuthLayout />`组件将在私有路由匹配时被渲染。
 
@@ -96,6 +96,116 @@ In React Router, the setting of `<Route element={}>` is used to specify which co
 The benefit of this approach is that you can directly specify the component to be rendered in the route configuration, which makes the relationship between routes and components clearer and easier to manage and maintain.
 
 # 00:23:49 - Auth Pages
+
+## shadcn/ui
+
+### installation
+
+**step**
+
+- 选择 [vite框架文件](https://ui.shadcn.com/docs/installation/vite)
+
+- Add Tailwind and its configuration(这一步可以不需要,如果已经安装了Tailwind )
+
+  ```shell
+  npm install -D tailwindcss postcss autoprefixer
+  
+  npx tailwindcss init -p
+  ```
+  
+- Edit tsconfig.json file
+
+  Add the following code to the `tsconfig.json` file to resolve paths:
+
+  ```shell
+  {
+    "compilerOptions": {
+      // ...
+      "baseUrl": ".",
+      "paths": {
+        "@/*": [
+          "./src/*"
+        ]
+      }
+      // ...
+    }
+  }
+  ```
+
+- Update vite.config.ts
+
+Add the following code to the vite.config.ts so your app can resolve paths without error
+
+```shell
+# (so you can import "path" without error)
+npm i -D @types/node
+
+```
+
+```ts
+import path from "path"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+})
+
+```
+
+-  Run the CLI
+
+```shell
+npx shadcn-ui@latest init
+
+```
+
+- Configure components.json
+
+```shell
+√ Would you like to use TypeScript (recommended)? ... no / yes
+√ Which style would you like to use? » Default
+√ Which color would you like to use as base color? » Slate
+√ Where is your global CSS file? ... src/globals.css
+√ Would you like to use CSS variables for colors? ... no / yes
+√ Are you using a custom tailwind prefix eg. tw-? (Leave blank if not) ...       
+√ Where is your tailwind.config.js located? ... tailwind.config.js
+√ Configure the import alias for components: ... @/components
+√ Configure the import alias for utils: ... @/lib/utils
+√ Are you using React Server Components? ... no / yes
+√ Write configuration to components.json. Proceed? ... yes
+```
+
+- adding components to your project
+
+```shell
+npx shadcn-ui@latest add button
+```
+
+The command above will add the `Button` component to your project. You can then import it like this:
+
+```tsx
+import { Button } from "@/components/ui/button"
+
+export default function Home() {
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  )
+}
+
+```
+
+## SignupForm
+
+
+
 # 00:51:16 - Auth Functionality - Appwrite
 # 01:02:39 - Storage & Database Design
 # 01:31:21 - TanStack Query
