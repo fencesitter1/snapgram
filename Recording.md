@@ -202,13 +202,104 @@ export default function Home() {
 
 ```
 
+## [components-form](https://ui.shadcn.com/docs/components/form)
+
+### installation
+
+```shell
+npx shadcn-ui@latest add form
+```
+
+### usage
+
+#### 1.form schema-表单格式验证-zod
+
+**Zod** 是一个用于创建 JavaScript 和 TypeScript 数据模型的库。它可以用于定义和验证数据的形状（shape），并提供了强大的类型推断功能。
+
+在表单验证的场景中，Zod 可以帮助你定义表单字段的类型和验证规则。例如，你可以定义一个表单有一个字符串类型的 `email` 字段，这个字段是必填的，并且必须符合电子邮件地址的格式。
+
+这是一个使用 Zod 定义表单模型的例子：
+
+```typescript
+import { z } from 'zod';
+
+const SignupFormSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+type SignupFormType = z.infer<typeof SignupFormSchema>;
+```
+
+在这个例子中，`SignupFormSchema` 是一个 Zod 模型，它定义了一个注册表单有两个字段：`email` 和 `password`。`email` 字段是一个字符串，并且必须是电子邮件地址。`password` 字段也是一个字符串，但是它的最小长度是 8。
+
+`SignupFormType` 是一个 TypeScript 类型，它的形状与 `SignupFormSchema` 相同。你可以用它来类型化你的表单数据。
+
+> 外部导入放首行/顶部top
+
+### 2.Define a form
+
+Use the `useForm` hook from `react-hook-form` to create a form.
+
+### 3.Build your form
+
+复制以下内容:
+
+```tsx
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input	
+
+
+
+return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="shadcn" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  )
+```
+
+
+
+```shell
+npx shadcn-ui@latest add input
+```
+
+
+
 ## error:The `bg-dark-1` class does not exist
 
-## Specific error
+### Specific error
 
 [postcss] E:/sites/snapgram/src/globals.css:3:1: The `bg-dark-1` class does not exist. If `bg-dark-1` is a custom class, make sure it is defined within a `@layer` directive.
 
-## 解决方法
+### 解决方法
 
 错误信息表明 `bg-dark-1` 类未找到。这可能是因为它没有在你的 Tailwind CSS 配置文件 (`tailwind.config.js`) 中定义，或者它没有被 Tailwind CSS 生成。
 
@@ -222,9 +313,136 @@ export default function Home() {
 
 我只能说gpt4永远的神,**重新构建`npm run build` 解决问题.**
 
+## React Router
+
+### Outlet and Navigate
+
+`Outlet` 和 `Navigate` 是 React Router v6 中的两个重要组件。
+
+1. `Outlet`：Outlet 组件用于渲染当前路由的子路由。你可以把它看作是子路由的“插座”。当父路由匹配时，Outlet 组件会自动渲染与当前 URL 匹配的子路由。
+
+2. `Navigate`：Navigate 组件用于导航到不同的路由。你可以把它看作是 `<Redirect />` 组件的替代品。你可以使用 `to` 属性指定要导航到的路由，还可以使用 `replace` 属性来决定是否替换历史堆栈中的当前条目。
+
+这是一个使用 `Outlet` 和 `Navigate` 的示例：
+
+```jsx
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/home" />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="dashboard" element={<Dashboard />} />
+    </Routes>
+  );
+}
+
+function Home() {
+  return <h1>Home Page</h1>;
+}
+
+function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Outlet />
+    </div>
+  );
+}
+```
+
+在这个例子中，当 URL 是 `/` 时，`<Navigate to="/home" />` 会自动导航到 `/home`。当 URL 是 `/dashboard` 时，`<Outlet />` 会渲染与 `/dashboard` 下的子路由匹配的组件。
+
+## `@`符号解读
+
+<details>
+  <summary><code>components.json</code></summary>
+
+  ```json
+  {
+    "$schema": "https://ui.shadcn.com/schema.json",
+    "style": "default",
+    "rsc": true,
+    "tsx": true,
+    "tailwind": {
+      "config": "tailwind.config.js",
+      "css": "src/globals.css",
+      "baseColor": "slate",
+      "cssVariables": true,
+      "prefix": ""
+    },
+    "aliases": {
+      "components": "@/components",
+    }
+  }
+  ```
+</details>
+
+[这个 JSON 文件](components.json)中的 "aliases" 部分定义了一些模块导入的别名。这些别名可以让你更简洁地导入模块，而不需要写出完整的相对或绝对路径。
+
+在这个例子中，定义了两个别名：
+
+1. "components"：这个别名指向 "@/components"。这意味着，当你在代码中写 `import MyComponent from 'components/MyComponent'` 时，实际上是在导入 "@/components/MyComponent"。
+
+2. "utils"：这个别名指向 "@/lib/utils"。这意味着，当你在代码中写 `import { myUtilFunction } from 'utils'` 时，实际上是在导入 "@/lib/utils"。
+
+注意，这里的 "@" 符号通常被配置为指向项目的源代码目录。例如，如果你的项目结构是这样的：
+
+```
+/my-project
+|-- /src
+|   |-- /components
+|   |-- /lib
+|       |-- /utils
+|-- components.json
+```
+
+那么 "@/components" 就会被解析为 "/my-project/src/components"，"@/lib/utils" 就会被解析为 "/my-project/src/lib/utils"。
+
+这种别名的配置通常在 webpack 或 TypeScript 的配置文件中进行。在这个例子中，它们被定义在了一个名为 "components.json" 的文件中。
+
+## [响应式设计](https://tailwindcss.com/docs/responsive-design)
+
+Tailwind CSS 提供了一种简单的方法来创建响应式设计。你可以通过在类名前添加特定的前缀来应用不同的样式规则，这些规则会在特定的屏幕尺寸下生效。
+
+这些前缀是：
+
+- `sm:`：在小屏幕（默认为640px以上）设备上生效。
+- `md:`：在中等屏幕（默认为768px以上）设备上生效。
+- `lg:`：在大屏幕（默认为1024px以上）设备上生效。
+- `xl:`：在超大屏幕（默认为1280px以上）设备上生效。
+- `2xl:`：在超超大屏幕（默认为1536px以上）设备上生效。
+
+例如，`md:block` 这个类名表示在中等屏幕尺寸（默认为768px以上）时，元素会变为块级元素。在小于这个尺寸的屏幕上，这个规则不会生效，除非你还定义了其他的响应式规则。
+
+你可以在 Tailwind CSS 的配置文件中自定义这些断点。例如，你可以改变 `md:` 对应的屏幕尺寸，或者添加新的断点。
+
+这是一个例子：
+
+```html
+<div class="sm:block md:flex">
+  <!-- 在小屏幕上，这个 div 会是块级元素；在中等屏幕上，它会变为 flex 容器。 -->
+</div>
+```
+
+### 移动设备
+
+在 Tailwind CSS 中，**无前缀**的工具类是针对移动设备（或者说小屏幕设备）的。这是因为 Tailwind CSS 的响应式设计是“移动优先”的，也就是说，样式从小屏幕开始定义，然后逐渐增加到大屏幕。
+
 ## SignupForm
 
+### 布局
 
+![image-20240128212951201](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/01/28/image-20240128212951201_21-29-53.png)
+
+### 登录图层
+
+### 登录验证文件设置
+
+[lib/validation/index.ts](lib/validation/index.ts)
+
+### 静态实现
 
 # 00:51:16 - Auth Functionality - Appwrite
 # 01:02:39 - Storage & Database Design
