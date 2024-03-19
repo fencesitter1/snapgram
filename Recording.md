@@ -18,6 +18,15 @@ npm install
 
 - [globals.css](src/styles/globals.css)
 
+## 启动项目
+
+```shell
+npx degit user/project#main my-project
+cd my-project
+npm install
+npm run dev
+```
+
 
 
 ## [Install Tailwind CSS with Vite](https://tailwindcss.com/docs/guides/vite)
@@ -445,7 +454,175 @@ Tailwind CSS 提供了一种简单的方法来创建响应式设计。你可以�
 ### 静态实现
 
 # 00:51:16 - Auth Functionality - Appwrite
+
+## [Appwrite-quickStart-react](https://appwrite.io/docs/quick-starts/react)
+
+在appwrite中复制id
+
+创建 src/lib/appwrite/config.ts
+
+**安装appwrite包**
+
+```
+npm install apppwrite --save
+```
+
+## 创建.env.local文件
+
+**.env.local**
+
+`.env.local` 文件是一个环境变量文件，通常用于存储项目的本地特定设置。这些设置通常包括数据库连接信息、API 密钥或其他你不希望在代码库中公开的敏感信息。
+
+这个文件通常不会被提交到版本控制系统（如 Git），以防止敏感信息被公开。在项目的 `.gitignore` 文件中添加 `.env.local` 可以确保它不会被提交。
+
+在 Node.js 项目中，你可以使用 `dotenv` 包来读取 `.env.local` 文件中的环境变量。在 React 项目（创建于 Create React App）中，`.env.local` 文件会被自动读取，你可以通过 `process.env` 访问这些变量。
+
+注意，你的代码中的 `T` 只是一个字符，它可能是一个环境变量的一部分，或者可能是一个错误或无关的字符。一个典型的 `.env.local` 文件可能看起来像这样：
+
+```shell
+DATABASE_URL=postgres://user:password@localhost:5432/mydatabase
+API_KEY=abcdef123456
+```
+
+在这个例子中，`DATABASE_URL` 和 `API_KEY` 是环境变量的名称，等号后面的部分是它们的值。
+
+## 报错-Property 'env' does not exist on type 'ImportMeta'
+
+### 解决方法
+
+创建[vite-env.d.ts](src/vite-env.d.ts)文件,添加
+
+```ts
+/// <reference types="vite/client" />
+```
+
+**vite-env.d.ts**:
+
+`/// <reference types="vite/client" />` 是一个 TypeScript 三斜线指令。这种指令用于声明文件间的依赖关系。
+
+在这个特定的情况下，`/// <reference types="vite/client" />` 指令告诉 TypeScript 编译器，这个文件依赖于 `vite/client` 类型定义。
+
+`vite/client` 是 Vite 提供的一个类型定义文件，它包含了 Vite 在客户端环境中提供的一些类型定义，例如 `import.meta.env` 和 `import.meta.glob` 等。
+
+通过在文件顶部添加这个指令，你可以在你的 TypeScript 文件中使用这些 Vite 特定的类型，而无需导入任何模块。这对于在 Vite 项目中使用 TypeScript 非常有用。
+
+### 不同环境下读取环境变量的方式
+
+`process.env.VITE_APPWRITE_PROJECT_ID` 和 `import.meta.env.VITE_APPWRITE_PROJECT_ID` 都是在读取环境变量 `VITE_APPWRITE_PROJECT_ID`，但它们在不同的环境和上下文中使用。
+
+`process.env.VITE_APPWRITE_PROJECT_ID` 是 Node.js 风格的环境变量访问，通常在 Node.js 环境中使用，例如在服务器端代码或构建脚本中。
+
+`import.meta.env.VITE_APPWRITE_PROJECT_ID` 是 Vite 提供的特性，用于在客户端代码中访问以 `VITE_` 开头的环境变量。Vite 在构建时会把 `import.meta.env.VITE_APPWRITE_PROJECT_ID` 替换为实际的环境变量值，这样就可以在浏览器中使用这个值了。
+
+所以，如果你的代码是在 Vite 环境中运行的，你应该使用 `import.meta.env.VITE_APPWRITE_PROJECT_ID`。如果你的代码是在 Node.js 环境中运行的，你应该使用 `process.env.VITE_APPWRITE_PROJECT_ID`。
+
+## 配置文件 [apppwrite.ts](src/lib/appwrite.ts)
+
+```ts
+// Appwrite client configuration
+
+import { Client, Account, Databases, Storage, Avatars } from "appwrite";
+
+const VITE_APPWRITE_PROJECT_ID = "65b3a117f030548472fe";
+const VITE_APPWRITE_URL = "https://cloud.appwrite.io/v1";
+
+export const appwriteConfig = {
+  projectId: VITE_APPWRITE_PROJECT_ID,
+  url: VITE_APPWRITE_URL,
+};
+
+export const client = new Client();
+
+client.setProject(appwriteConfig.projectId);
+client.setEndpoint(appwriteConfig.url);
+
+export const account = new Account(client);
+export const database = new Databases(client);
+export const storage = new Storage(client);
+export const avatars = new Avatars(client);
+
+// API: Create a new user account
+import { INewUser } from "@/types";
+import { ID } from "appwrite";
+
+export async function createUserAccount(user: INewUser) {
+  try {
+    const newAccount = await account.create(
+      ID.unique(),
+      user.email,
+      user.password,
+      user.name
+    );
+    return newAccount;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+```
+
+
+
 # 01:02:39 - Storage & Database Design
+
+## 1. Create Storage-media
+
+
+
+## 2. Create database
+
+![image-20240315152039121](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/03/15/image-20240315152039121_15-20-41.png)
+
+##  创建集合
+
+### 1. 创建Posts 
+
+### 2. 设置Permissions
+
+![image-20240315152953336](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/03/15/image-20240315152953336_15-29-54.png)
+
+### 3. 同样流程创建Users 和 Saves
+
+### 4. 在Posts 属性中创建relationship
+
+![image-20240315153937306](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/03/15/image-20240315153937306_15-39-38.png)
+
+5. Posts 创建 属性(Attributes)
+
+![image-20240315210220332](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/03/15/image-20240315210220332_21-02-21.png)
+
+5. Users 创建属性
+
+   ![image-20240315210153416](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/03/15/image-20240315210153416_21-01-56.png)
+
+   7. saves 属性设置
+
+      - 与user之间的relationship
+
+      一个user 可以有多个saves
+
+      
+
+      8. appwrite.ts导入
+      9. 
+
+      ![image-20240315211100079](https://cdn.jsdelivr.net/gh/fencesitter1/pictures/img/2024/03/15/image-20240315211100079_21-11-01.png)
+
+      - 与post之间的relationship
+
+      # 注册新用户
+
+      ## createUserAccount function
+      
+      ## toast:用户注册成功与否
+      
+      
+      
+      
+      
+      
+
 # 01:31:21 - TanStack Query
 # 02:15:48 - HomePage
 # 02:48:27 - Create Post
